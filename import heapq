@@ -1,0 +1,51 @@
+import heapq
+
+# The adjacency list of the graph: City distances from the table
+graph = {
+    'Barcelona': {'London': 130, 'Paris': 100, 'Beijing': 685, 'Atlanta': 595, 'Montreal': 500, 'Seoul': 745},
+    'London': {'Barcelona': 130, 'Paris': 80, 'Beijing': 605, 'Atlanta': 565, 'Rio de Janeiro': 700, 'Tokyo': 835, 'Montreal': 420, 'Seoul': 760},
+    'Paris': {'London': 80, 'Barcelona': 100, 'Beijing': 635, 'Atlanta': 575, 'Rio de Janeiro': 680, 'Tokyo': 815, 'Montreal': 460, 'Seoul': 725},
+    'Beijing': {'London': 605, 'Paris': 635, 'Barcelona': 685, 'Rio de Janeiro': 1315, 'Sydney': 660, 'Tokyo': 210, 'Seoul': 180, 'Melbourne': 690},
+    'Atlanta': {'London': 565, 'Paris': 575, 'Barcelona': 595, 'Rio de Janeiro': 585, 'Sydney': 1335, 'Tokyo': 855, 'Montreal': 160, 'Seoul': 930},
+    'Rio de Janeiro': {'London': 700, 'Paris': 680, 'Barcelona': 1280, 'Beijing': 1315, 'Atlanta': 585, 'Sydney': 1265},
+    'Sydney': {'London': 1290, 'Paris': 1280, 'Barcelona': 1345, 'Beijing': 660, 'Atlanta': 1335, 'Rio de Janeiro': 1265, 'Tokyo': 590, 'Melbourne': 95, 'Seoul': 640},
+    'Tokyo': {'London': 835, 'Paris': 815, 'Beijing': 210, 'Atlanta': 855, 'Sydney': 590, 'Melbourne': 615, 'Montreal': 750, 'Seoul': 155},
+    'Melbourne': {'Beijing': 690, 'Sydney': 95, 'Tokyo': 615},
+    'Montreal': {'London': 420, 'Paris': 460, 'Barcelona': 500, 'Atlanta': 160, 'Tokyo': 750, 'Seoul': 890},
+    'Seoul': {'London': 760, 'Paris': 725, 'Barcelona': 745, 'Beijing': 180, 'Atlanta': 930, 'Rio de Janeiro': 640, 'Tokyo': 155, 'Montreal': 890},
+}
+
+def dijkstra(graph, start, end):
+    # Priority queue to store (distance, node)
+    queue = [(0, start)]
+    distances = {city: float('inf') for city in graph}
+    distances[start] = 0
+    visited = set()
+
+    while queue:
+        # Get the city with the smallest distance
+        current_distance, current_city = heapq.heappop(queue)
+        
+        # If the current city is the target, return the distance
+        if current_city == end:
+            return current_distance
+        
+        if current_city in visited:
+            continue
+
+        visited.add(current_city)
+
+        # Check all neighboring cities
+        for neighbor, distance in graph[current_city].items():
+            new_distance = current_distance + distance
+
+            # Only consider this path if it's better
+            if new_distance < distances[neighbor]:
+                distances[neighbor] = new_distance
+                heapq.heappush(queue, (new_distance, neighbor))
+
+    return distances[end]
+
+# Find shortest path from Barcelona to Atlanta
+shortest_distance = dijkstra(graph, 'Barcelona', 'Atlanta')
+shortest_distance
